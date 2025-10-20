@@ -1,0 +1,12 @@
+{
+  "devDependencies": {
+    "audit-ci": "^7.1.0",
+    "eslint": "^9.38.0",
+    "eslint-plugin-security": "^3.0.1"
+  },
+  "scripts": {
+    "lint:security": "eslint . --ext .js,.ts",
+    "audit:ci": "audit-ci --moderate",
+    "test:security": "npm run lint:security && npm run audit:ci"
+  }
+}

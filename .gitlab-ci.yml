@@ -1,0 +1,14 @@
+stages:
+  - install
+  - security
+
+install:
+  stage: install
+  script:
+    - npm ci
+
+security_scan:
+  stage: security
+  script:
+    - npm run test:security
+  allow_failure: false
