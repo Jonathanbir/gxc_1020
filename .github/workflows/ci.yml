@@ -24,7 +24,7 @@ jobs:
 
       - name: Run ESLint Security Check
         run: |
-          npm run lint:security -- --format json -o eslint-report.json
+          npm run lint:security
 
       - name: Run Dependency Audit
         run: |

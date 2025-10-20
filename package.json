@@ -5,7 +5,7 @@
     "eslint-plugin-security": "^3.0.1"
   },
   "scripts": {
-    "lint:security": "eslint . --ext .js,.ts",
+    "lint:security": "eslint . --format json -o eslint-report.json",
     "audit:ci": "audit-ci --moderate",
     "test:security": "npm run lint:security && npm run audit:ci"
   }
