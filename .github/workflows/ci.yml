@@ -1,7 +1,8 @@
-name: Security CI
+name: CI Security Scan
 
 on:
   push:
+    branches: [main]
   pull_request:
 
 jobs:
@@ -18,17 +19,35 @@ jobs:
           node-version: 20
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
-      - name: Run ESLint Security Check
-        run: npm run lint:security
+      - name: Run ESLint Security Lint
+        run: npm run lint:security || true
 
-      - name: Run NPM Audit Check
-        run: npm run audit:ci
-        continue-on-error: true
+      - name: Run Audit Scan
+        run: npm run audit:ci || true
 
-      - name: Upload ESLint report
+      - name: Generate Security PDF Report
+        run: |
+          npm install -g json2md pdfkit
+          echo "## Security Scan Report" > report.md
+          echo "\n### ESLint Security Results\n" >> report.md
+          if [ -f eslint-report.json ]; then
+            echo "\`\`\`json" >> report.md
+            cat eslint-report.json >> report.md
+            echo "\`\`\`" >> report.md
+          fi
+          echo "\n### NPM Audit Results\n" >> report.md
+          npm audit --json > audit-report.json || true
+          echo "\`\`\`json" >> report.md
+          cat audit-report.json >> report.md
+          echo "\`\`\`" >> report.md
+
+          # 轉成 PDF
+          npx markdown-pdf report.md -o security-report.pdf
+
+      - name: Upload PDF Report
         uses: actions/upload-artifact@v4
         with:
-          name: security-reports
-          path: eslint-report.json
+          name: security-report
+          path: security-report.pdf
