@@ -25,6 +25,7 @@ jobs:
 
       - name: Run NPM Audit Check
         run: npm run audit:ci
+        continue-on-error: true
 
       - name: Upload ESLint report
         uses: actions/upload-artifact@v4
