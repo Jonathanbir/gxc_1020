@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="30px" height="30px" viewBox="0 0 30 30" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 56.2 (81672) - https://sketch.com -->
+    <title>ic/sdwan/p3_path_01</title>
+    <desc>Created with Sketch.</desc>
+    <g id="ic/sdwan/p3_path_01" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M15,25 C9.4771525,25 5,20.5228475 5,15 C5,9.4771525 9.4771525,5 15,5 C20.5228475,5 25,9.4771525 25,15 C25,20.5228475 20.5228475,25 15,25 Z M14.878,10.004 C14.542,10.354 14.122,10.676 13.618,10.984 C13.114,11.264 12.638,11.46 12.19,11.572 L12.19,13.196 C13.114,12.93 13.87,12.524 14.472,11.978 L14.472,20 L16.11,20 L16.11,10.004 L14.878,10.004 Z" id="ic_sdwan_p3_path_01" fill="#209CFF"></path>
+    </g>
+</svg>

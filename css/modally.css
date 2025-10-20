@@ -1,0 +1,97 @@
+/* modally v1.1.8 | undefined | MIT License */
+.modally-wrap {
+  height: 100%;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  opacity: 0;
+  display: none;
+  box-sizing: border-box;
+  transition: opacity 500ms ease-in-out;
+}
+
+.modally-wrap .modally-underlay {
+  position: fixed;
+  background: rgba(0,0,0,0.8);
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+
+.modally {
+  margin: 0px auto;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 1;
+  width: calc(100% - 40px);
+  max-width: 65.117vw;
+  height: auto;
+  background: white;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+  /* padding: 4.453vw 6.094vw; */
+  padding: 4.453vw 5vw;
+  border-radius: 2.813vw;
+  overflow: hidden;
+}
+
+.modally .modally-close-button {
+  border: none;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 0;
+  font-size: 0;
+  background-color: transparent;
+  line-height: 1;
+  transition: opacity 250ms ease-in-out;
+  -webkit-font-smoothing: inherit;
+  -moz-osx-font-smoothing: inherit;
+  appearance: none;
+}
+
+.modally .modally-close-button img {
+  max-width: 3.906vw;
+}
+/* Remove excess padding and border in Firefox 4+ */
+.modally .modally-close-button::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+
+.modally-table {
+  display: table;
+  width: 100%;
+  min-height: 100%;
+}
+
+.modally-cell {
+  display: table-cell;
+  vertical-align: middle;
+  position: relative;
+}
+
+.modally .iframe-landing {
+  position: relative;
+}
+
+.modally .iframe-landing iframe,
+.modally .iframe-landing video {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  border: none;
+}

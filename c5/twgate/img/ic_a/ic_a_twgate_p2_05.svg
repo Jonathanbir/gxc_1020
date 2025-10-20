@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="44px" height="44px" viewBox="0 0 44 44" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>ic_a/cdn/ic_a_cdn_p3_08</title>
+    <defs>
+        <filter color-interpolation-filters="auto" id="filter-1">
+            <feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0.125490 0 0 0 0 0.611765 0 0 0 0 1.000000 0 0 0 1.000000 0"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="ic_a/cdn/ic_a_cdn_p3_08" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g filter="url(#filter-1)" id="security_black_24dp-(1)">
+            <g transform="translate(6.000000, 2.000000)">
+                <path d="M14.8909091,0.316332378 L2.16363636,6.01948424 C0.854545455,6.60630372 0,7.92664756 0,9.37535817 L0,17.9942693 C0,28.1719198 6.98181818,37.6893983 16.3636364,40 C25.7454545,37.6893983 32.7272727,28.1719198 32.7272727,17.9942693 L32.7272727,9.37535817 C32.7272727,7.92664756 31.8727273,6.60630372 30.5636364,6.01948424 L17.8363636,0.316332378 C16.9090909,-0.105444126 15.8181818,-0.105444126 14.8909091,0.316332378 Z M16.3636364,19.8097421 L29.0909091,19.8097421 C28.1272727,27.365043 23.1272727,34.0951289 16.3636364,36.2040115 L16.3636364,19.8280802 L3.63636364,19.8280802 L3.63636364,9.37535817 L16.3636364,3.6722063 L16.3636364,19.8097421 Z" id="Shape" fill="#000000" fill-rule="nonzero"></path>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 57.1 (83088) - https://sketch.com -->
+    <title>ic/common/plus</title>
+    <desc>Created with Sketch.</desc>
+    <g id="ic/common/plus" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <circle id="Oval" fill="#209CFF" cx="12" cy="12" r="12"></circle>
+        <path d="M13,5 L13,11 L19,11 L19,13 L12.999,13 L13,19 L11,19 L10.999,13 L5,13 L5,11 L11,11 L11,5 L13,5 Z" id="Combined-Shape" fill="#FFFFFF"></path>
+    </g>
+</svg>
