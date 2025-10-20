@@ -25,26 +25,18 @@ jobs:
         run: npm run lint:security || true
 
       - name: Run Audit Scan
-        run: npm run audit:ci || true
+        run: npm audit --json > audit-report.json || true
 
       - name: Generate Security PDF Report
         run: |
-          npm install -g json2md pdfkit
-          echo "## Security Scan Report" > report.md
-          echo "\n### ESLint Security Results\n" >> report.md
-          if [ -f eslint-report.json ]; then
-            echo "\`\`\`json" >> report.md
-            cat eslint-report.json >> report.md
-            echo "\`\`\`" >> report.md
-          fi
-          echo "\n### NPM Audit Results\n" >> report.md
-          npm audit --json > audit-report.json || true
-          echo "\`\`\`json" >> report.md
-          cat audit-report.json >> report.md
-          echo "\`\`\`" >> report.md
+          npm install pdfkit
+          node .github/scripts/generate-security-report.js
 
-          # 轉成 PDF
-          npx markdown-pdf report.md -o security-report.pdf
+      - name: Upload PDF Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-report
+          path: security-report.pdf
 
       - name: Upload PDF Report
         uses: actions/upload-artifact@v4
