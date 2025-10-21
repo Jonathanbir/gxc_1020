@@ -1,39 +1,30 @@
-name: CI Security Scan
+name: Fortify Local Scan + PDF Report
 
 on:
   push:
-    branches: [main]
+    branches: [main, develop]
   pull_request:
+    branches: [main, develop]
+  workflow_dispatch: # 手動執行
 
 jobs:
-  security-scan:
+  fortify_scan:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Java
+        uses: actions/setup-java@v4
         with:
-          node-version: 20
+          java-version: "17"
+          distribution: "temurin"
 
-      - name: Install dependencies
-        run: npm install
+      - name: Setup Fortify SCA
+        uses: fortify/gha-setup-scanner@v2
 
-      - name: Run ESLint Security Lint
-        run: npm run lint:security || true
-
-      - name: Run Audit Scan
-        run: npm audit --json > audit-report.json || true
-
-      - name: Generate Security PDF Report
+      - name: Run Fortify static analysis
         run: |
-          npm install pdfkit
-          node .github/scripts/generate-security-report.js
-
-      - name: Upload PDF Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: security-report
-          path: security-report.pdf
+          # 清除舊的掃描資料
+          sourceanalyzer -b myBuildID -clean
+          # 掃描你的專案 (這裡用 . 表示整個專案資料夾)
