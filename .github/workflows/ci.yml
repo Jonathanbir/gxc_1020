@@ -1,63 +1,57 @@
-name: Open Source Security Scan + PDF Report
+name: Fortify Local Scan + PDF Report
 
 on:
   push:
     branches: [main, develop]
   pull_request:
     branches: [main, develop]
-  workflow_dispatch: # 可手動執行
+  workflow_dispatch: # 手動觸發
 
 jobs:
-  security_scan:
+  fortify_scan:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
+      - name: Checkout source code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Java
+        uses: actions/setup-java@v4
         with:
-          node-version: 20
+          java-version: "17"
+          distribution: "temurin"
 
-      - name: Install dependencies
-        run: npm ci
+      # ✅ 官方 Fortify 公開 Action
+      - name: Setup Fortify SCA
+        uses: fortify/github-action/setup-scanner@v2
 
-      - name: Install security tools
+      - name: Run Fortify Static Scan
         run: |
-          npm install --save-dev eslint eslint-plugin-security audit-ci semgrep puppeteer
-          npm install -g markdown-pdf
+          echo "🧹 Cleaning previous builds..."
+          sourceanalyzer -b myBuildID -clean
 
-      - name: Run ESLint Security Check
+          echo "🔍 Scanning source files..."
+          # 這裡用 . 表示掃整個專案，可改 src/
+          sourceanalyzer -b myBuildID .
+
+          echo "📦 Generating FPR result..."
+          sourceanalyzer -b myBuildID -scan -f result.fpr
+
+      - name: Generate PDF Report (local)
         run: |
-          npx eslint . --ext .js,.html -f json -o eslint-report.json || true
+          echo "🧾 Generating PDF from FPR..."
+          # 用 find 找出 ReportGenerator 工具實際路徑
+          REPORTGEN_PATH=$(find /opt -type f -name ReportGenerator 2>/dev/null | head -n 1)
+          if [ -z "$REPORTGEN_PATH" ]; then
+            echo "❌ ReportGenerator not found in PATH. Trying default location..."
+            REPORTGEN_PATH="/opt/fortify/ReportGenerator/bin/ReportGenerator"
+          fi
+          chmod +x "$REPORTGEN_PATH"
+          "$REPORTGEN_PATH" -format pdf -f fortify-report.pdf -source result.fpr
+          ls -lh fortify-report.pdf
 
-      - name: Run Dependency Audit
-        run: |
-          npx audit-ci --moderate || true
-          npm audit --json > npm-audit.json || true
-
-      - name: Run Semgrep scan (open source SAST)
-        run: |
-          npx semgrep ci --config=p/owasp-top-ten --json > semgrep-report.json || true
-
-      - name: Combine results into Markdown report
-        run: |
-          echo "# 🔐 Security Scan Report" > security-report.md
-          echo "## ESLint Security Results" >> security-report.md
-          cat eslint-report.json | jq -r '.[]? | "- " + .filePath + ": " + (.messages | map(.message) | join("; "))' >> security-report.md
-          echo "\n## NPM Dependency Audit" >> security-report.md
-          cat npm-audit.json | jq -r '.advisories? | to_entries[]? | "- " + .value.module_name + ": " + .value.title' >> security-report.md
-          echo "\n## Semgrep Results" >> security-report.md
-          cat semgrep-report.json | jq -r '.results?[]? | "- " + .check_id + " → " + .extra.message' >> security-report.md
-
-      - name: Generate PDF report
-        run: |
-          markdown-pdf security-report.md
-
-      - name: Upload Security Report
+      - name: Upload PDF to GitHub (for download)
         uses: actions/upload-artifact@v4
         with:
-          name: OpenSource-Security-Scan-Report
-          path: |
-            security-report.md
-            security-report.pdf
+          name: Fortify-PDF-Report
+          path: fortify-report.pdf
