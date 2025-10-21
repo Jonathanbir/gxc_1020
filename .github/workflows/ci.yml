@@ -1,36 +1,63 @@
-name: Fortify Local Scan + PDF Report
+name: Open Source Security Scan + PDF Report
 
 on:
   push:
     branches: [main, develop]
   pull_request:
     branches: [main, develop]
-  workflow_dispatch: # 手動執行
+  workflow_dispatch: # 可手動執行
 
 jobs:
-  fortify_scan:
+  security_scan:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Java
-        uses: actions/setup-java@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          java-version: "17"
-          distribution: "temurin"
+          node-version: 20
 
-      - name: Setup Fortify SCA
-        uses: fortify/github-action/setup-scanner@v2
+      - name: Install dependencies
+        run: npm ci
 
-      - name: Run Fortify static analysis
+      - name: Install security tools
         run: |
-          # 清除舊的掃描資料
-          sourceanalyzer -b myBuildID -clean
-          # 掃描你的專案 (這裡用 . 表示整個專案資料夾)
+          npm install --save-dev eslint eslint-plugin-security audit-ci semgrep puppeteer
+          npm install -g markdown-pdf
 
-      - name: Setup Fortify SCA manually
+      - name: Run ESLint Security Check
         run: |
-          curl -L -o Fortify_SCA.zip https://your-company-fortify-server/tools/Fortify_SCA_Linux.zip
-          unzip Fortify_SCA.zip -d fortify
-          export PATH="$PWD/fortify/bin:$PATH"
+          npx eslint . --ext .js,.html -f json -o eslint-report.json || true
+
+      - name: Run Dependency Audit
+        run: |
+          npx audit-ci --moderate || true
+          npm audit --json > npm-audit.json || true
+
+      - name: Run Semgrep scan (open source SAST)
+        run: |
+          npx semgrep ci --config=p/owasp-top-ten --json > semgrep-report.json || true
+
+      - name: Combine results into Markdown report
+        run: |
+          echo "# 🔐 Security Scan Report" > security-report.md
+          echo "## ESLint Security Results" >> security-report.md
+          cat eslint-report.json | jq -r '.[]? | "- " + .filePath + ": " + (.messages | map(.message) | join("; "))' >> security-report.md
+          echo "\n## NPM Dependency Audit" >> security-report.md
+          cat npm-audit.json | jq -r '.advisories? | to_entries[]? | "- " + .value.module_name + ": " + .value.title' >> security-report.md
+          echo "\n## Semgrep Results" >> security-report.md
+          cat semgrep-report.json | jq -r '.results?[]? | "- " + .check_id + " → " + .extra.message' >> security-report.md
+
+      - name: Generate PDF report
+        run: |
+          markdown-pdf security-report.md
+
+      - name: Upload Security Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: OpenSource-Security-Scan-Report
+          path: |
+            security-report.md
+            security-report.pdf
