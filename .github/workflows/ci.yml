@@ -21,10 +21,16 @@ jobs:
           distribution: "temurin"
 
       - name: Setup Fortify SCA
-        uses: fortify/gha-setup-scanner@v2
+        uses: fortify/github-action/setup-scanner@v2
 
       - name: Run Fortify static analysis
         run: |
           # 清除舊的掃描資料
           sourceanalyzer -b myBuildID -clean
           # 掃描你的專案 (這裡用 . 表示整個專案資料夾)
+
+      - name: Setup Fortify SCA manually
+        run: |
+          curl -L -o Fortify_SCA.zip https://your-company-fortify-server/tools/Fortify_SCA_Linux.zip
+          unzip Fortify_SCA.zip -d fortify
+          export PATH="$PWD/fortify/bin:$PATH"
