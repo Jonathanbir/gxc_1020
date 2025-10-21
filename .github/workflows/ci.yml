@@ -5,14 +5,14 @@ on:
     branches: [main, develop]
   pull_request:
     branches: [main, develop]
-  workflow_dispatch: # 手動觸發
+  workflow_dispatch:
 
 jobs:
   fortify_scan:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout source code
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Setup Java
@@ -21,36 +21,34 @@ jobs:
           java-version: "17"
           distribution: "temurin"
 
-      # ✅ 官方 Fortify 公開 Action
-      - name: Setup Fortify SCA
-        uses: fortify/github-action/setup-scanner@v2
+      - name: Download and Install Fortify SCA
+        run: |
+          echo "⬇️ Downloading Fortify SCA CLI..."
+          curl -L -o fortify.zip https://download.microfocus.com/fortify/sca/latest/Fortify_SCA_Linux.zip
+          unzip -q fortify.zip -d fortify
+          export PATH="$PWD/fortify/bin:$PATH"
+          echo "$PWD/fortify/bin" >> $GITHUB_PATH
 
       - name: Run Fortify Static Scan
         run: |
           echo "🧹 Cleaning previous builds..."
-          sourceanalyzer -b myBuildID -clean
+          sourceanalyzer -b myBuildID -clean || true
 
-          echo "🔍 Scanning source files..."
-          # 這裡用 . 表示掃整個專案，可改 src/
+          echo "🔍 Scanning project..."
           sourceanalyzer -b myBuildID .
 
-          echo "📦 Generating FPR result..."
+          echo "📦 Generating FPR..."
           sourceanalyzer -b myBuildID -scan -f result.fpr
 
-      - name: Generate PDF Report (local)
+      - name: Generate PDF Report
         run: |
-          echo "🧾 Generating PDF from FPR..."
-          # 用 find 找出 ReportGenerator 工具實際路徑
-          REPORTGEN_PATH=$(find /opt -type f -name ReportGenerator 2>/dev/null | head -n 1)
-          if [ -z "$REPORTGEN_PATH" ]; then
-            echo "❌ ReportGenerator not found in PATH. Trying default location..."
-            REPORTGEN_PATH="/opt/fortify/ReportGenerator/bin/ReportGenerator"
-          fi
-          chmod +x "$REPORTGEN_PATH"
-          "$REPORTGEN_PATH" -format pdf -f fortify-report.pdf -source result.fpr
+          echo "🧾 Generating PDF report..."
+          REPORTGEN=$(find fortify -type f -name ReportGenerator 2>/dev/null | head -n 1)
+          chmod +x "$REPORTGEN"
+          "$REPORTGEN" -format pdf -f fortify-report.pdf -source result.fpr
           ls -lh fortify-report.pdf
 
-      - name: Upload PDF to GitHub (for download)
+      - name: Upload PDF Report
         uses: actions/upload-artifact@v4
         with:
           name: Fortify-PDF-Report
